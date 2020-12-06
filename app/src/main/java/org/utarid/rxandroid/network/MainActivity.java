@@ -5,11 +5,17 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.utarid.rxandroid.network.databinding.ActivityMainBinding;
 import org.utarid.rxandroid.network.network.ApiClient;
 import org.utarid.rxandroid.network.network.ApiService;
 import org.utarid.rxandroid.network.network.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -20,6 +26,9 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private ApiService apiService;
+    private UsersAdapter mAdapter;
+    private List<User> globalPostsList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
         apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
 
+        RecyclerView recyclerView = binding.recyclerView;
+
+        mAdapter = new UsersAdapter(this, globalPostsList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         binding.buttonPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onNext(@NonNull User posts) {
                                 Log.d("rxAndroidNetwork", "onNext");
+                                globalPostsList.add(posts);
+                                mAdapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -83,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onNext(@NonNull List<User> users) {
                                 Log.d("rxAndroidNetwork", "onNext");
+                                globalPostsList.addAll(users);
+                                mAdapter.notifyDataSetChanged();
                             }
 
                             @Override
