@@ -25,9 +25,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ApiService apiService;
-    private UsersAdapter mAdapter;
-    private List<User> globalPostsList = new ArrayList<>();
+    //private ApiService apiService;
+//    private UsersAdapter mAdapter;
+//    private List<User> globalUsersList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(getApplicationContext()).create(ApiService.class);
 
+        List<User> globalUsersList = new ArrayList<>();
         RecyclerView recyclerView = binding.recyclerView;
-
-        mAdapter = new UsersAdapter(this, globalPostsList);
+        UsersAdapter mAdapter = new UsersAdapter(this, globalUsersList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onNext(@NonNull User posts) {
+                            public void onNext(@NonNull User users) {
                                 Log.d("rxAndroidNetwork", "onNext");
-                                globalPostsList.add(posts);
+                                globalUsersList.add(users);
                                 mAdapter.notifyDataSetChanged();
                             }
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onNext(@NonNull List<User> users) {
                                 Log.d("rxAndroidNetwork", "onNext");
-                                globalPostsList.addAll(users);
+                                globalUsersList.addAll(users);
                                 mAdapter.notifyDataSetChanged();
                             }
 
